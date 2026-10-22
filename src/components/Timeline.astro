@@ -4,10 +4,10 @@ import { timeline } from '../data/timeline';
 
 <section class="content-section timeline-section" aria-labelledby="timeline-title">
   <h2 id="timeline-title">これまで</h2>
-  <ol class="timeline relative list-none p-0 m-[26px_0_0_5px] max-[700px]:mt-[23px]" data-timeline>
+  <ol class="timeline relative list-none p-0 m-[26px_0_0_5px] max-[700px]:mt-5.75" data-timeline>
     {timeline.map(entry => (
-      <li class="milestone relative p-[0_0_32px_33px] max-[700px]:pl-7 max-[700px]:pb-[30px]">
-        <span class="milestone-dot absolute z-[1] top-2 left-0 w-3 h-3 rounded-full bg-paper" aria-hidden="true" />
+      <li class="milestone relative p-[0_0_32px_33px] max-[700px]:pl-7 max-[700px]:pb-7.5">
+        <span class="milestone-dot absolute z-1 top-2 left-0 w-3 h-3 rounded-full bg-paper" aria-hidden="true" />
         <div class="milestone-content relative p-[0_0_0_3px]">
           <div class="milestone-meta flex items-center gap-3 min-h-7">
             <span class="milestone-date text-[11px] text-muted">
@@ -35,7 +35,7 @@ import { timeline } from '../data/timeline';
 }
 .timeline::before,
 .timeline::after {
-  @apply absolute top-[var(--track-top)] left-[5px] w-[2px] h-[var(--track-height)] rounded-[2px] bg-outline;
+  @apply absolute top-(--track-top) left-1.25 w-0.5 h-(--track-height) rounded-xs bg-outline;
   content: '';
   transform-origin: top;
 }
@@ -62,7 +62,7 @@ p {
   @apply text-muted text-[11px] leading-[1.9] m-0;
 }
 .milestone-content a {
-  @apply text-primary text-[10px] inline-flex items-center gap-[13px] min-h-9 mt-1;
+  @apply text-primary text-[10px] inline-flex items-center gap-3.25 min-h-9 mt-1;
   text-decoration-style: dashed;
 }
 .milestone-content a span {

@@ -8,14 +8,12 @@ export interface TimelineEntry {
   linkLabel?: string;
 }
 
-// 年月順。公開する経歴はここに追加する。
 export const timeline: TimelineEntry[] = [
   {
     date: '2026-04',
     endDate: '2029-03',
     kind: '学歴',
-    title: 'A高校',
-    description: '仮の学歴データ',
+    title: 'S高等学校',
   },
   {
     date: '2026-07',
