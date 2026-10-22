@@ -1,0 +1,41 @@
+---
+import { navigation, type Page } from '../data/navigation';
+
+interface Props {
+  page: Page;
+}
+
+const { page } = Astro.props;
+const social = [
+  { name: 'X', url: 'https://x.com/mocha_amase' },
+  { name: 'Misskey', url: 'https://msk.amase.cc/@cocoa' },
+  { name: 'GitHub', url: 'https://github.com/AmaseCocoa' },
+  { name: 'Qiita', url: 'https://qiita.com/AmaseCocoa' },
+];
+---
+
+<aside class="sidebar sticky top-10 p-[21px_21px_22px_0] min-h-110 min-[1400px]:top-16 max-[900px]:top-[26px] max-[900px]:pr-[15px] max-[700px]:static max-[700px]:min-h-0 max-[700px]:p-[25px_8px_17px] max-[700px]:grid max-[700px]:grid-cols-[1fr_auto] max-[700px]:gap-x-[14px] max-[360px]:gap-x-2 max-[360px]:px-[3px]" aria-label="プロフィールとナビゲーション">
+  <a class="identity flex gap-[13px] items-center no-underline max-[900px]:gap-[10px] max-[700px]:gap-3" href="/" aria-label="Cocoa ホーム" transition:name="identity">
+    <img src="https://github.com/AmaseCocoa.png" alt="" width="64" height="64" />
+    <div>
+      <span class="identity-name block w-[fit-content] text-[21px] leading-[1.5] tracking-[-.7px] max-[900px]:text-[19px] max-[700px]:text-[21px]">Cocoa</span>
+      <span class="identity-role block whitespace-nowrap text-[10px] text-muted mt-[1px] max-[900px]:text-[9px] max-[700px]:text-[10px] max-[360px]:text-[9px]">Backend Developer</span>
+    </div>
+  </a>
+
+  <nav class="social-links flex flex-wrap gap-x-[14px] mt-[17px] max-[700px]:col-[1_/_-1] max-[700px]:mt-[10px] max-[700px]:gap-[19px]" aria-label="SNS">
+    {social.map(({ name, url }) => <a href={url}>{name}</a>)}
+  </nav>
+
+  <nav class="global-nav flex flex-col gap-[5px] mt-[25px] max-[700px]:col-[1_/_-1] max-[700px]:flex-row max-[700px]:gap-[6px] max-[700px]:mt-[10px] max-[360px]:flex-wrap" aria-label="メインナビゲーション">
+    {navigation.map(({ id, url, label }) => (
+      <a href={url} aria-current={page === id ? 'page' : undefined}>
+        <span aria-hidden="true">/</span> {label}
+        <span class="nav-arrow ml-auto opacity-0 max-[700px]:hidden" aria-hidden="true">→</span>
+      </a>
+    ))}
+  </nav>
+
+  <a class="blog-link flex items-center justify-between min-h-11 p-[9px_13px] mt-[26px] rounded-[24px] no-underline text-[11px] max-[700px]:row-[1] max-[700px]:col-[2] max-[700px]:m-0 max-[700px]:p-[9px_13px] max-[700px]:min-h-10 max-[700px]:self-center max-[700px]:gap-[14px] max-[700px]:text-[10px] max-[360px]:text-[9px] max-[360px]:px-[10px] max-[360px]:gap-[7px]" href="https://tw.amase.cc">ブログを読む <span aria-hidden="true">↗</span></a>
+  <a class="site-address block w-[fit-content] m-[24px_13px_0] text-muted text-[10px] no-underline max-[700px]:hidden" href="/">amase.cc</a>
+</aside>

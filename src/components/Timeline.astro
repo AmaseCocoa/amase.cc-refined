@@ -4,17 +4,17 @@ import { timeline } from '../data/timeline';
 
 <section class="content-section timeline-section" aria-labelledby="timeline-title">
   <h2 id="timeline-title">これまで</h2>
-  <ol class="timeline" data-timeline>
+  <ol class="timeline relative list-none p-0 m-[26px_0_0_5px] max-[700px]:mt-[23px]" data-timeline>
     {timeline.map(entry => (
-      <li class="milestone">
-        <span class="milestone-dot" aria-hidden="true" />
-        <div class="milestone-content">
-          <div class="milestone-meta">
-            <span class="milestone-date">
+      <li class="milestone relative p-[0_0_32px_33px] max-[700px]:pl-7 max-[700px]:pb-[30px]">
+        <span class="milestone-dot absolute z-[1] top-2 left-0 w-3 h-3 rounded-full bg-paper" aria-hidden="true" />
+        <div class="milestone-content relative p-[0_0_0_3px]">
+          <div class="milestone-meta flex items-center gap-3 min-h-7">
+            <span class="milestone-date text-[11px] text-muted">
               <time datetime={entry.date}>{entry.date.replace('-', '.')}</time>
               {entry.endDate && <> 〜 <time datetime={entry.endDate}>{entry.endDate.replace('-', '.')}</time></>}
             </span>
-            <span class="milestone-kind">{entry.kind}</span>
+            <span class="milestone-kind text-[9px] text-muted p-[0_7px] rounded-[5px]">{entry.kind}</span>
           </div>
           <h3>{entry.title}</h3>
           {entry.description && <p>{entry.description}</p>}
@@ -26,67 +26,80 @@ import { timeline } from '../data/timeline';
 </section>
 
 <style>
-  .timeline {
-    --track-top: 14px;
-    --track-height: calc(100% - 100px);
-    --progress: 1;
-    position: relative;
-    list-style: none;
-    padding: 0;
-    margin: 26px 0 0 5px;
+@reference "../styles/global.css";
+
+.timeline {
+  --track-top: 14px;
+  --track-height: calc(100% - 100px);
+  --progress: 1;
+}
+.timeline::before,
+.timeline::after {
+  @apply absolute top-[var(--track-top)] left-[5px] w-[2px] h-[var(--track-height)] rounded-[2px] bg-outline;
+  content: '';
+  transform-origin: top;
+}
+.timeline::after {
+  @apply bg-primary;
+  transform: scaleY(var(--progress));
+}
+.milestone:last-child {
+  @apply pb-0;
+}
+.milestone-dot {
+  border: 2px solid var(--primary);
+}
+time {
+  @apply text-primary text-[12px] font-semibold;
+}
+.milestone-kind {
+  border: 1px solid var(--outline);
+}
+h3 {
+  @apply text-[14px] font-semibold leading-[1.8] m-[8px_0_5px];
+}
+p {
+  @apply text-muted text-[11px] leading-[1.9] m-0;
+}
+.milestone-content a {
+  @apply text-primary text-[10px] inline-flex items-center gap-[13px] min-h-9 mt-1;
+  text-decoration-style: dashed;
+}
+.milestone-content a span {
+  transition: translate .3s var(--ease);
+}
+.milestone-content a:hover span {
+  translate: 2px -2px;
+}
+[data-motion='true'] .milestone-dot {
+  border-color: var(--outline);
+  transition: background .3s, border-color .3s, box-shadow .4s;
+}
+[data-motion='true'] .milestone-content {
+  translate: 8px 0;
+  transition: translate .65s var(--ease);
+}
+[data-motion='true'] .is-reached .milestone-dot {
+  @apply bg-primary;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 5px var(--primary-container);
+}
+[data-motion='true'] .is-reached .milestone-content {
+  translate: 0 0;
+}
+@media (max-width: 700px) {
+  h3 {
+    @apply text-[13px];
   }
-  .timeline::before,
+}
+@media (prefers-reduced-motion: reduce) {
   .timeline::after {
-    content: '';
-    position: absolute;
-    top: var(--track-top);
-    left: 5px;
-    width: 2px;
-    height: var(--track-height);
-    border-radius: 2px;
-    background: var(--outline);
-    transform-origin: top;
+    transform: none;
   }
-  .timeline::after {
-    background: var(--primary);
-    transform: scaleY(var(--progress));
+  [data-motion='true'] .milestone-content {
+    translate: none;
   }
-  .milestone { position: relative; padding: 0 0 32px 33px; }
-  .milestone:last-child { padding-bottom: 0; }
-  .milestone-dot {
-    position: absolute;
-    z-index: 1;
-    top: 8px;
-    left: 0;
-    width: 12px;
-    height: 12px;
-    border: 2px solid var(--primary);
-    border-radius: 50%;
-    background: var(--paper);
-  }
-  .milestone-content { position: relative; padding: 0 0 0 3px; }
-  .milestone-meta { display: flex; align-items: center; gap: 12px; min-height: 28px; }
-  time { color: var(--primary); font-size: 12px; font-weight: 600; }
-  .milestone-date { font-size: 11px; color: var(--muted); }
-  .milestone-kind { font-size: 9px; color: var(--muted); border: 1px solid var(--outline); padding: 0 7px; border-radius: 5px; }
-  h3 { font-size: 14px; font-weight: 600; line-height: 1.8; margin: 8px 0 5px; }
-  p { color: var(--muted); font-size: 11px; line-height: 1.9; margin: 0; }
-  .milestone-content a { color: var(--primary); font-size: 10px; display: inline-flex; align-items: center; gap: 13px; min-height: 36px; margin-top: 4px; text-decoration-style: dashed; }
-  .milestone-content a span { transition: translate .3s var(--ease); }
-  .milestone-content a:hover span { translate: 2px -2px; }
-  [data-motion='true'] .milestone-dot { border-color: var(--outline); transition: background .3s, border-color .3s, box-shadow .4s; }
-  [data-motion='true'] .milestone-content { translate: 8px 0; transition: translate .65s var(--ease); }
-  [data-motion='true'] .is-reached .milestone-dot { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 0 5px var(--primary-container); }
-  [data-motion='true'] .is-reached .milestone-content { translate: 0 0; }
-  @media (max-width: 700px) {
-    .timeline { margin-top: 23px; }
-    .milestone { padding-left: 28px; padding-bottom: 30px; }
-    h3 { font-size: 13px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .timeline::after { transform: none; }
-    [data-motion='true'] .milestone-content { translate: none; }
-  }
+}
 </style>
 
 <script>

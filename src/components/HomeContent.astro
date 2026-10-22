@@ -1,0 +1,26 @@
+---
+import NowPlaying from './NowPlaying.vue';
+import RecentArticles from './RecentArticles.astro';
+---
+
+<section class="content-section reveal" aria-labelledby="now-title">
+  <h2 id="now-title">最近していること</h2>
+  <ul class="activity-list list-none m-0 p-[17px_22px] rounded-[14px] bg-surface max-[700px]:p-[14px_17px]">
+    <li><span class="list-marker text-primary" aria-hidden="true">−</span><div>インフラ</div></li>
+    <li><span class="list-marker text-primary" aria-hidden="true">−</span><div>プログラミング<p>インフラにはまってあんまりしてない</p></div></li>
+  </ul>
+</section>
+
+<NowPlaying />
+
+<RecentArticles />
+
+<section class="content-section reveal" aria-labelledby="links-title">
+  <h2 id="links-title">Links</h2>
+  <p>バナーを募集してるかもしれないとか…</p>
+  <div class="recommendations mt-[27px]">
+    <h3>おすすめのリンク</h3>
+    <p>とにかくおすすめのリンクを貼るだけのセクションです（順次追加）</p>
+    <ul><li><a href="https://www.youtube.com/@KoshiraiSofuto">おすすめ1 <span aria-hidden="true">↗</span></a><span class="recommendation-note text-[10px] text-muted max-[700px]:block max-[700px]:text-[9px]">：<s>けもみみ！！！！！！！！！！！！！！！！！！！！</s></span></li></ul>
+  </div>
+</section>

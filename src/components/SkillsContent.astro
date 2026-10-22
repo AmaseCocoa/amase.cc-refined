@@ -1,0 +1,14 @@
+---
+const skills = [
+  { title: 'Frontend', items: ['TypeScript', 'Tailwind CSS', 'Astro', 'Vue'] },
+  { title: 'Backend', items: ['TypeScript', 'Express', 'Python', 'Go', 'Rust', 'ActivityPub'] },
+  { title: 'Misc', items: ['Arch Linux', 'Linux', 'Git'] },
+];
+---
+
+{skills.map(({ title: group, items }) => (
+  <section class="content-section reveal">
+    <h2>{group}</h2>
+    <ul class="skill-list flex flex-wrap gap-[9px] list-none p-0 m-0">{items.map(item => <li>{item}</li>)}</ul>
+  </section>
+))}

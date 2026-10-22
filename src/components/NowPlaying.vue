@@ -43,21 +43,21 @@ if (isProd) {
 
 <template>
     <section class="content-section reveal" aria-labelledby="now-playing-title">
-        <div class="section-heading">
+        <div class="section-heading flex items-center justify-between gap-4 mb-4">
             <h2 id="now-playing-title">Now Playing</h2>
         </div>
-        <div class="now-playing" v-if="nowPlaying">
-            <div class="artwork-placeholder" aria-hidden="true">
+        <div class="now-playing flex items-center gap-[17px] p-[18px] bg-surface rounded-[14px] max-[360px]:p-[14px] max-[360px]:gap-3" v-if="nowPlaying">
+            <div class="artwork-placeholder grid place-items-center flex-[0_0_65px] h-[65px] rounded-[10px] text-primary bg-surface-container max-[360px]:basis-13 max-[360px]:h-13" aria-hidden="true">
                 <img :src="nowPlaying.album.image" class="record-center rounded-lg" />
             </div>
-            <div class="track-placeholder">
-                <p class="track-title"><a :href="nowPlaying.url" target="_blank" ref="noreferer noopener">{{
+            <div class="track-placeholder min-w-0">
+                <p class="track-title m-0 text-[12px] font-medium"><a :href="nowPlaying.url" target="_blank" ref="noreferer noopener">{{
                         nowPlaying.name }} - {{ nowPlaying.artist }}</a></p>
-                <p class="track-note">{{ nowPlaying.album.name }}</p>
+                <p class="track-note m-[6px_0_0] text-muted text-[10px] leading-[1.9]">{{ nowPlaying.album.name }}</p>
             </div>
         </div>
-        <div class="now-playing" v-else>
-            <div class="artwork-placeholder" aria-hidden="true">
+        <div class="now-playing flex items-center gap-[17px] p-[18px] bg-surface rounded-[14px] max-[360px]:p-[14px] max-[360px]:gap-3" v-else>
+            <div class="artwork-placeholder grid place-items-center flex-[0_0_65px] h-[65px] rounded-[10px] text-primary bg-surface-container max-[360px]:basis-13 max-[360px]:h-13" aria-hidden="true">
                 <svg viewBox="0 0 48 48" fill="none">
                     <circle cx="24" cy="24" r="17" />
                     <circle cx="24" cy="24" r="10" />
@@ -65,101 +65,50 @@ if (isProd) {
                     <path d="M24 7a17 17 0 0 1 17 17M24 14a10 10 0 0 1 10 10" />
                 </svg>
             </div>
-            <div class="track-placeholder">
-                <p class="track-title" v-if="nowPlaying === null">再生している曲はありません</p>
-                <p class="track-title" v-else-if="nowPlaying === undefined">取得中...</p>
+            <div class="track-placeholder min-w-0">
+                <p class="track-title m-0 text-[12px] font-medium" v-if="nowPlaying === null">再生している曲はありません</p>
+                <p class="track-title m-0 text-[12px] font-medium" v-else-if="nowPlaying === undefined">取得中...</p>
             </div>
         </div>
     </section>
 </template>
 
 <style scoped>
+@reference "../styles/global.css";
+
 .lastfm-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--muted);
-    font-size: 10px;
+  @apply inline-flex items-center gap-[10px] text-muted text-[10px];
 }
 
 .lastfm-label span {
-    padding: 1px 7px;
-    border: 1px solid var(--outline);
-    border-radius: 5px;
-    font-size: 9px;
+  @apply p-[1px_7px] rounded-[5px] text-[9px];
+  border: 1px solid var(--outline);
 }
-
 .now-playing {
-    display: flex;
-    align-items: center;
-    gap: 17px;
-    padding: 18px;
-    background: var(--surface);
-    border: 1px dashed var(--outline);
-    border-radius: 14px;
-}
-
-.artwork-placeholder {
-    display: grid;
-    place-items: center;
-    flex: 0 0 65px;
-    height: 65px;
-    border-radius: 10px;
-    color: var(--primary);
-    background: var(--surface-container);
+  border: 1px dashed var(--outline);
 }
 
 svg {
-    width: 47px;
-    height: 47px;
+  @apply w-[47px] h-[47px];
 }
 
 svg circle {
-    stroke: var(--outline);
-    stroke-width: 1.4;
+  stroke: var(--outline);
+  stroke-width: 1.4;
 }
 
 svg path {
-    stroke: currentColor;
-    stroke-width: 1.4;
-    stroke-linecap: round;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
 }
-
 .record-center {
-    stroke: currentColor;
-}
-
-.track-placeholder {
-    min-width: 0;
-}
-
-.track-title {
-    margin: 0;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.track-note {
-    margin: 6px 0 0;
-    color: var(--muted);
-    font-size: 10px;
-    line-height: 1.9;
+  stroke: currentColor;
 }
 
 @media (max-width: 360px) {
-    .now-playing {
-        padding: 14px;
-        gap: 12px;
-    }
-
-    .artwork-placeholder {
-        flex-basis: 52px;
-        height: 52px;
-    }
-
-    svg {
-        width: 39px;
-        height: 39px;
-    }
+  svg {
+    @apply w-[39px] h-[39px];
+  }
 }
 </style>

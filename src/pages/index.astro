@@ -1,5 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Portfolio from '../components/Portfolio.astro';
+import HomeContent from '../components/HomeContent.astro';
 ---
-<Layout><Portfolio /></Layout>
+
+<Layout>
+  <Portfolio page="home">
+    <HomeContent />
+  </Portfolio>
+</Layout>
