@@ -1,16 +1,21 @@
 ---
+import Timeline from './Timeline.astro';
+import NowPlaying from './NowPlaying.vue';
+
 const { page = 'home' } = Astro.props;
 const navigation = [
   { id: 'home', url: '/', label: 'Home' },
   { id: 'skills', url: '/skills/', label: 'Skills' },
   { id: 'works', url: '/works/', label: 'Works' },
+  { id: 'timeline', url: '/timeline/', label: 'Timeline' },
 ];
 const title = navigation.find(item => item.id === page)?.label ?? 'Home';
 const description = {
   home: '多分色々なことをしています！',
   skills: '実はこんなことができます',
   works: '作ったものがあるのかも',
-}[page as 'home' | 'skills' | 'works'];
+  timeline: '学歴や、つくってきたものなど。',
+}[page as 'home' | 'skills' | 'works' | 'timeline'];
 const social = [
   { name: 'X', url: 'https://x.com/mocha_amase' },
   { name: 'Misskey', url: 'https://msk.amase.cc/@cocoa' },
@@ -74,6 +79,8 @@ const slide = {
             </ul>
           </section>
 
+          <NowPlaying />
+
           <section class="content-section reveal" aria-labelledby="articles-title">
             <div class="section-heading"><h2 id="articles-title">最近の記事</h2><a href="https://tw.amase.cc" class="subtle-link">ブログへ <span aria-hidden="true">↗</span></a></div>
             <div class="recent-articles" data-feed aria-live="polite" aria-busy="true">
@@ -95,6 +102,8 @@ const slide = {
           </section>
         </>
       )}
+
+      {page === 'timeline' && <Timeline />}
 
       {page === 'skills' && skills.map(({ title: group, items }) => (
         <section class="content-section reveal">

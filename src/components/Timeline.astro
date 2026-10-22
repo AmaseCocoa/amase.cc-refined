@@ -1,0 +1,145 @@
+---
+import { timeline } from '../data/timeline';
+---
+
+<section class="content-section timeline-section" aria-labelledby="timeline-title">
+  <h2 id="timeline-title">これまで</h2>
+  <ol class="timeline" data-timeline>
+    {timeline.map(entry => (
+      <li class="milestone">
+        <span class="milestone-dot" aria-hidden="true" />
+        <div class="milestone-content">
+          <div class="milestone-meta">
+            <span class="milestone-date">
+              <time datetime={entry.date}>{entry.date.replace('-', '.')}</time>
+              {entry.endDate && <> 〜 <time datetime={entry.endDate}>{entry.endDate.replace('-', '.')}</time></>}
+            </span>
+            <span class="milestone-kind">{entry.kind}</span>
+          </div>
+          <h3>{entry.title}</h3>
+          {entry.description && <p>{entry.description}</p>}
+          {entry.href && <a href={entry.href}>{entry.linkLabel ?? '詳しく見る'} <span aria-hidden="true">↗</span></a>}
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .timeline {
+    --track-top: 14px;
+    --track-height: calc(100% - 100px);
+    --progress: 1;
+    position: relative;
+    list-style: none;
+    padding: 0;
+    margin: 26px 0 0 5px;
+  }
+  .timeline::before,
+  .timeline::after {
+    content: '';
+    position: absolute;
+    top: var(--track-top);
+    left: 5px;
+    width: 2px;
+    height: var(--track-height);
+    border-radius: 2px;
+    background: var(--outline);
+    transform-origin: top;
+  }
+  .timeline::after {
+    background: var(--primary);
+    transform: scaleY(var(--progress));
+  }
+  .milestone { position: relative; padding: 0 0 32px 33px; }
+  .milestone:last-child { padding-bottom: 0; }
+  .milestone-dot {
+    position: absolute;
+    z-index: 1;
+    top: 8px;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    background: var(--paper);
+  }
+  .milestone-content { position: relative; padding: 0 0 0 3px; }
+  .milestone-meta { display: flex; align-items: center; gap: 12px; min-height: 28px; }
+  time { color: var(--primary); font-size: 12px; font-weight: 600; }
+  .milestone-date { font-size: 11px; color: var(--muted); }
+  .milestone-kind { font-size: 9px; color: var(--muted); border: 1px solid var(--outline); padding: 0 7px; border-radius: 5px; }
+  h3 { font-size: 14px; font-weight: 600; line-height: 1.8; margin: 8px 0 5px; }
+  p { color: var(--muted); font-size: 11px; line-height: 1.9; margin: 0; }
+  .milestone-content a { color: var(--primary); font-size: 10px; display: inline-flex; align-items: center; gap: 13px; min-height: 36px; margin-top: 4px; text-decoration-style: dashed; }
+  .milestone-content a span { transition: translate .3s var(--ease); }
+  .milestone-content a:hover span { translate: 2px -2px; }
+  [data-motion='true'] .milestone-dot { border-color: var(--outline); transition: background .3s, border-color .3s, box-shadow .4s; }
+  [data-motion='true'] .milestone-content { translate: 8px 0; transition: translate .65s var(--ease); }
+  [data-motion='true'] .is-reached .milestone-dot { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 0 5px var(--primary-container); }
+  [data-motion='true'] .is-reached .milestone-content { translate: 0 0; }
+  @media (max-width: 700px) {
+    .timeline { margin-top: 23px; }
+    .milestone { padding-left: 28px; padding-bottom: 30px; }
+    h3 { font-size: 13px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .timeline::after { transform: none; }
+    [data-motion='true'] .milestone-content { translate: none; }
+  }
+</style>
+
+<script>
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let dispose = () => {};
+
+  function setupTimeline() {
+    dispose();
+    const timeline = document.querySelector<HTMLOListElement>('[data-timeline]');
+    if (!timeline) return;
+    const items = [...timeline.querySelectorAll<HTMLElement>('.milestone')];
+    const dots = [...timeline.querySelectorAll<HTMLElement>('.milestone-dot')];
+    if (!dots.length) return;
+    const controller = new AbortController();
+    let frame = 0;
+
+    function update() {
+      frame = 0;
+      if (!timeline) return;
+      const bounds = timeline.getBoundingClientRect();
+      const points = dots.map(dot => {
+        const rect = dot.getBoundingClientRect();
+        return rect.top + rect.height / 2;
+      });
+      const start = points[0];
+      const length = points[points.length - 1] - start;
+      const readingLine = window.innerHeight * 0.64;
+      const progress = motion.matches ? 1 : Math.max(0, Math.min(1, (readingLine - start) / Math.max(length, 1)));
+
+      timeline.dataset.motion = String(!motion.matches);
+      timeline.style.setProperty('--track-top', `${start - bounds.top}px`);
+      timeline.style.setProperty('--track-height', `${length}px`);
+      timeline.style.setProperty('--progress', String(progress));
+      items.forEach((item, i) => item.classList.toggle('is-reached', motion.matches || points[i] <= readingLine));
+    }
+
+    function scheduleUpdate() {
+      if (!frame) frame = requestAnimationFrame(update);
+    }
+
+    window.addEventListener('scroll', scheduleUpdate, { passive: true, signal: controller.signal });
+    window.addEventListener('resize', scheduleUpdate, { signal: controller.signal });
+    motion.addEventListener('change', scheduleUpdate, { signal: controller.signal });
+    const resizeObserver = new ResizeObserver(scheduleUpdate);
+    resizeObserver.observe(timeline);
+    update();
+    dispose = () => {
+      controller.abort();
+      resizeObserver.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }
+
+  document.addEventListener('astro:page-load', setupTimeline);
+  document.addEventListener('astro:before-swap', () => dispose());
+</script>

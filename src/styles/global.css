@@ -141,7 +141,7 @@ main:focus { outline: none; }
   .social-links { grid-column: 1 / -1; margin-top: 10px; gap: 19px; }
   .social-links a { font-size: 10px; min-height: 32px; }
   .global-nav { grid-column: 1 / -1; flex-direction: row; gap: 6px; margin-top: 10px; }
-  .global-nav a { justify-content: center; flex: 1; gap: 8px; padding: 10px 12px; font-size: 12px; }
+  .global-nav a { justify-content: center; flex: 1; gap: 6px; padding: 10px 7px; font-size: 11px; }
   .nav-arrow { display: none; }
   .blog-link { grid-row: 1; grid-column: 2; margin: 0; padding: 9px 13px; min-height: 40px; align-self: center; gap: 14px; font-size: 10px; }
   .site-address { display: none; }
@@ -164,6 +164,8 @@ main:focus { outline: none; }
   .sidebar { column-gap: 8px; padding-inline: 3px; }
   .identity-role { font-size: 9px; }
   .blog-link { font-size: 9px; padding-inline: 10px; gap: 7px; }
+  .global-nav { flex-wrap: wrap; }
+  .global-nav a { flex-basis: calc(50% - 3px); }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
