@@ -33,7 +33,7 @@ const validate = async (resp: Response) => {
 }
 
 if (isProd) {
-    const resp = await fetch('http://localhost:8787/api/v1/now_playing');
+    const resp = await fetch('https://cfw-lastfm-proxy.amase-cocoa.workers.dev/api/v1/now_playing');
     await validate(resp)
 } else {
     const resp = await fetch('http://localhost:8787/api/v1/now_playing');
