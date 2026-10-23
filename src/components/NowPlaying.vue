@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 type NowPlaying = {
   name: string;
@@ -17,6 +17,7 @@ const endpoint = import.meta.env.PROD
 
 const nowPlaying = ref<NowPlaying | null | undefined>(undefined);
 const failed = ref(false);
+const loading = computed(() => nowPlaying.value === undefined && !failed.value);
 let controller: AbortController | undefined;
 
 async function loadNowPlaying() {
@@ -47,9 +48,18 @@ onUnmounted(() => controller?.abort());
 </script>
 
 <template>
-    <section class="content-section reveal" aria-labelledby="now-playing-title" aria-live="polite" :aria-busy="nowPlaying === undefined && !failed">
+    <section class="content-section reveal" aria-labelledby="now-playing-title" aria-live="polite" :aria-busy="loading">
         <div class="section-heading flex items-center justify-between gap-4 mb-4">
             <h2 id="now-playing-title">Now Playing</h2>
+            <button
+                type="button"
+                class="subtle-link cursor-pointer border-0 bg-transparent p-0 min-h-8 inline-flex items-center gap-2 whitespace-nowrap text-[10px] text-primary disabled:cursor-wait disabled:opacity-50"
+                aria-label="再生情報を更新"
+                :disabled="loading"
+                @click="loadNowPlaying"
+            >
+                <span aria-hidden="true">↻</span> {{ loading ? '更新中…' : '更新' }}
+            </button>
         </div>
         <div class="now-playing flex items-center gap-[17px] p-[18px] bg-surface rounded-[14px] max-[360px]:p-[14px] max-[360px]:gap-3" v-if="nowPlaying">
             <div class="artwork-placeholder grid place-items-center flex-[0_0_65px] h-[65px] rounded-[10px] text-primary bg-surface-container max-[360px]:basis-13 max-[360px]:h-13" aria-hidden="true">
@@ -71,10 +81,7 @@ onUnmounted(() => controller?.abort());
                 </svg>
             </div>
             <div class="track-placeholder min-w-0">
-                <template v-if="failed">
-                    <p class="track-title m-0 text-[12px] font-medium">曲の情報を取得できませんでした</p>
-                    <button type="button" class="retry-button cursor-pointer bg-paper text-primary rounded-[20px] p-[9px_15px] min-h-10 text-[11px] mt-3" @click="loadNowPlaying">もう一度読み込む</button>
-                </template>
+                <p class="track-title m-0 text-[12px] font-medium" v-if="failed">曲の情報を取得できませんでした。更新ボタンから再試行できます。</p>
                 <p class="track-title m-0 text-[12px] font-medium" v-else-if="nowPlaying === null">再生している曲はありません</p>
                 <p class="track-title m-0 text-[12px] font-medium" v-else-if="nowPlaying === undefined">取得中...</p>
             </div>

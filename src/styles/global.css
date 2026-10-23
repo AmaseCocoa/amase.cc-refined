@@ -144,16 +144,24 @@ main:focus {
 .page-heading p {
   @apply text-[13px] m-0 text-muted;
 }
-.content-section + .content-section {
+.content-section + .content-section,
+.content-section ~ astro-island > .content-section,
+astro-island + .content-section {
   @apply mt-[34px];
 }
 .content-section > h2, .section-heading h2 {
   @apply text-[17px] font-semibold leading-[1.6] tracking-[-.3px] m-0;
 }
-.content-section > h2 {
-  @apply flex items-center gap-4 mb-[18px];
+.content-section > h2, .section-heading > h2 {
+  @apply flex items-center gap-4;
 }
-.content-section > h2::after {
+.content-section > h2 {
+  @apply mb-[18px];
+}
+.section-heading > h2 {
+  @apply min-w-0 flex-1;
+}
+.content-section > h2::after, .section-heading > h2::after {
   @apply flex-1;
   content: '';
   border-top: 1px dashed var(--outline);
