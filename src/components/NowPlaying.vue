@@ -1,57 +1,62 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
-type nowPlayingApiResp = {
-    name: string,
-    artist: string,
-    album: {
-        name: string,
-        image: string
-    },
-    url: string
+type NowPlaying = {
+  name: string;
+  artist: string;
+  album: {
+    name: string;
+    image: string;
+  };
+  url: string;
 };
 
-const isProd = import.meta.env.PROD;
+const endpoint = import.meta.env.PROD
+  ? 'https://cfw-lastfm-proxy.amase-cocoa.workers.dev/api/v1/now_playing'
+  : 'http://localhost:8787/api/v1/now_playing';
 
-const nowPlaying = ref<nowPlayingApiResp | null | undefined>(undefined);
+const nowPlaying = ref<NowPlaying | null | undefined>(undefined);
+const failed = ref(false);
+let controller: AbortController | undefined;
 
-const validate = async (resp: Response) => {
-    if (resp.status === 200) {
-        const data: {
-            name: string,
-            artist: string,
-            album: {
-                name: string,
-                image: string
-            },
-            url: string
-        } = await resp.json();
-        nowPlaying.value = data;
-    } else {
-        nowPlaying.value = null;
+async function loadNowPlaying() {
+  controller?.abort();
+  const request = new AbortController();
+  controller = request;
+  nowPlaying.value = undefined;
+  failed.value = false;
+
+  try {
+    const response = await fetch(endpoint, {
+      signal: AbortSignal.any([request.signal, AbortSignal.timeout(8000)]),
+      cache: 'no-store',
+    });
+    if (response.status === 204 || response.status === 404) {
+      nowPlaying.value = null;
+      return;
     }
+    if (!response.ok) throw new Error('Now Playing unavailable');
+    nowPlaying.value = await response.json();
+  } catch {
+    if (!request.signal.aborted) failed.value = true;
+  }
 }
 
-if (isProd) {
-    const resp = await fetch('https://cfw-lastfm-proxy.amase-cocoa.workers.dev/api/v1/now_playing');
-    await validate(resp)
-} else {
-    const resp = await fetch('http://localhost:8787/api/v1/now_playing');
-    await validate(resp)
-}
+onMounted(() => void loadNowPlaying());
+onUnmounted(() => controller?.abort());
 </script>
 
 <template>
-    <section class="content-section reveal" aria-labelledby="now-playing-title">
+    <section class="content-section reveal" aria-labelledby="now-playing-title" aria-live="polite" :aria-busy="nowPlaying === undefined && !failed">
         <div class="section-heading flex items-center justify-between gap-4 mb-4">
             <h2 id="now-playing-title">Now Playing</h2>
         </div>
         <div class="now-playing flex items-center gap-[17px] p-[18px] bg-surface rounded-[14px] max-[360px]:p-[14px] max-[360px]:gap-3" v-if="nowPlaying">
             <div class="artwork-placeholder grid place-items-center flex-[0_0_65px] h-[65px] rounded-[10px] text-primary bg-surface-container max-[360px]:basis-13 max-[360px]:h-13" aria-hidden="true">
-                <img :src="nowPlaying.album.image" class="record-center rounded-lg" />
+                <img :src="nowPlaying.album.image" class="record-center rounded-lg" alt="" />
             </div>
             <div class="track-placeholder min-w-0">
-                <p class="track-title m-0 text-[12px] font-medium"><a :href="nowPlaying.url" target="_blank" ref="noreferer noopener">{{
+                <p class="track-title m-0 text-[12px] font-medium"><a :href="nowPlaying.url" target="_blank" rel="noreferrer noopener">{{
                         nowPlaying.name }} - {{ nowPlaying.artist }}</a></p>
                 <p class="track-note m-[6px_0_0] text-muted text-[10px] leading-[1.9]">{{ nowPlaying.album.name }}</p>
             </div>
@@ -66,7 +71,11 @@ if (isProd) {
                 </svg>
             </div>
             <div class="track-placeholder min-w-0">
-                <p class="track-title m-0 text-[12px] font-medium" v-if="nowPlaying === null">再生している曲はありません</p>
+                <template v-if="failed">
+                    <p class="track-title m-0 text-[12px] font-medium">曲の情報を取得できませんでした</p>
+                    <button type="button" class="retry-button cursor-pointer bg-paper text-primary rounded-[20px] p-[9px_15px] min-h-10 text-[11px] mt-3" @click="loadNowPlaying">もう一度読み込む</button>
+                </template>
+                <p class="track-title m-0 text-[12px] font-medium" v-else-if="nowPlaying === null">再生している曲はありません</p>
                 <p class="track-title m-0 text-[12px] font-medium" v-else-if="nowPlaying === undefined">取得中...</p>
             </div>
         </div>
