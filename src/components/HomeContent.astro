@@ -11,9 +11,9 @@ import RecentArticles from './RecentArticles.astro';
   </ul>
 </section>
 
-<NowPlaying />
+<NowPlaying client:only="vue" />
 
-<RecentArticles />
+<RecentArticles client:only="vue" />
 
 <section class="content-section reveal" aria-labelledby="links-title">
   <h2 id="links-title">Links</h2>
